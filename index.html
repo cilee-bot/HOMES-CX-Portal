@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOMES CX Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="cx-header">
+  <div class="logo">
+    <div class="logo-icon">CX</div>
+    <span>HOMES CX Portal</span>
+    <span id="db-badge" class="db-badge db-local">로컬</span>
+  </div>
+</header>
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="cx-sidebar">
+  <div class="nav-group">
+    <div class="nav-label">Overview</div>
+    <button class="nav-item" data-nav="dashboard">
+      <span class="nav-icon"><i class="ri-dashboard-3-line"></i></span>
+      CX 대시보드
+    </button>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Operations</div>
+
+    <button class="nav-item" data-nav="voc" data-default-sub="dash">
+      <span class="nav-icon"><i class="ri-chat-voice-line"></i></span>
+      VOC 관리
+    </button>
+    <div class="nav-sub" id="nav-sub-voc">
+      <button class="nav-sub-item" data-sub="voc.dash">대시보드</button>
+      <button class="nav-sub-item" data-sub="voc.input">VOC 입력</button>
+      <button class="nav-sub-item" data-sub="voc.list">목록</button>
+      <button class="nav-sub-item" data-sub="voc.report">주간 리포트</button>
+    </div>
+
+    <button class="nav-item" data-nav="survey" data-default-sub="overview">
+      <span class="nav-icon"><i class="ri-survey-line"></i></span>
+      고객여정 설문
+    </button>
+    <div class="nav-sub" id="nav-sub-survey">
+      <button class="nav-sub-item" data-sub="survey.overview">여정 Overview</button>
+      <button class="nav-sub-item" data-sub="survey.collect">고객정보 수집</button>
+      <button class="nav-sub-item" data-sub="survey.onboard">온보딩 방법론</button>
+      <button class="nav-sub-item" data-sub="survey.stage">단계별 설문</button>
+    </div>
+
+    <button class="nav-item" data-nav="kb" data-default-sub="customer">
+      <span class="nav-icon"><i class="ri-book-open-line"></i></span>
+      헬프센터
+    </button>
+    <div class="nav-sub" id="nav-sub-kb">
+      <button class="nav-sub-item" data-sub="kb.customer">고객 뷰</button>
+      <button class="nav-sub-item" data-sub="kb.admin">관리자 편집</button>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Data & Insights</div>
+    <button class="nav-item" data-nav="customers">
+      <span class="nav-icon"><i class="ri-user-heart-line"></i></span>
+      고객 데이터
+    </button>
+    <button class="nav-item" data-nav="cxroles">
+      <span class="nav-icon"><i class="ri-team-line"></i></span>
+      CX 팀/역할
+    </button>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">System</div>
+    <button class="nav-item" data-nav="settings">
+      <span class="nav-icon"><i class="ri-settings-3-line"></i></span>
+      설정
+    </button>
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="cx-main">
+
+  <!-- CX Dashboard -->
+  <div id="mod-dashboard" class="module"></div>
+
+  <!-- VOC -->
+  <div id="mod-voc" class="module"></div>
+
+  <!-- Survey -->
+  <div id="mod-survey" class="module"></div>
+
+  <!-- Knowledge Base -->
+  <div id="mod-kb" class="module"></div>
+
+  <!-- Customers -->
+  <div id="mod-customers" class="module"></div>
+
+  <!-- CX Roles -->
+  <div id="mod-cxroles" class="module"></div>
+
+  <!-- Settings -->
+  <div id="mod-settings" class="module"></div>
+</div>
+
+<!-- Toast -->
+<div id="cx-toast" class="toast"></div>
+
+<!-- Modal -->
+<div id="cx-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 id="modal-title" style="font-weight:700;color:var(--text-h)"></h3>
+      <button onclick="document.getElementById('cx-modal').classList.remove('show')" style="border:none;background:none;font-size:22px;color:var(--dim);cursor:pointer">&times;</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Scripts: Core -->
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+
+<!-- Scripts: Modules -->
+<script src="modules/dashboard.js"></script>
+<script src="modules/voc.js"></script>
+<script src="modules/survey.js"></script>
+<script src="modules/kb-data.js"></script>
+<script src="modules/kb.js"></script>
+<script src="modules/customers.js"></script>
+<script src="modules/cx-roles.js"></script>
+<script src="modules/settings.js"></script>
+</body>
+</html>

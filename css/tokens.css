@@ -1,0 +1,77 @@
+/* HOMES CX Portal — Design Tokens (통합 디자인 변수) */
+:root {
+  /* Background */
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg-dark: #0f172a;
+
+  /* Text */
+  --text: #334155;
+  --text-h: #0f172a;
+  --muted: #64748b;
+  --dim: #94a3b8;
+
+  /* Primary (blue — 설문도구+KB 기준) */
+  --accent: #3b82f6;
+  --accent2: #2563eb;
+  --accent-muted: rgba(59,130,246,0.08);
+
+  /* Secondary (indigo — VOC 기준) */
+  --indigo: #4F46E5;
+  --indigo2: #4338CA;
+  --indigo-muted: rgba(79,70,229,0.08);
+
+  /* Semantic */
+  --green: #16a34a;
+  --green-muted: rgba(22,163,74,0.08);
+  --orange: #ea580c;
+  --orange-muted: rgba(234,88,12,0.08);
+  --purple: #9333ea;
+  --purple-muted: rgba(147,51,234,0.08);
+  --red: #dc2626;
+  --red-muted: rgba(220,38,38,0.08);
+  --yellow: #ca8a04;
+  --yellow-muted: rgba(202,138,4,0.08);
+  --cyan: #0891b2;
+  --cyan-muted: rgba(8,145,178,0.08);
+  --amber: #d97706;
+
+  /* Border */
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.12);
+
+  /* Radius */
+  --r: 12px;
+  --r-sm: 8px;
+  --r-full: 9999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow: 0 1px 4px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+  background: var(--bg2);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+input, select, textarea { transition: box-shadow .15s; }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-muted);
+  border-color: var(--accent) !important;
+}
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.fade { animation: fadeIn .25s ease; }
