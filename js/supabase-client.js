@@ -4,6 +4,10 @@ const HomesSB = (() => {
   const CONFIG_KEY = 'homes_cx_cfg';
   const LEGACY_KEYS = ['voc_cfg', 'homes_sb_cfg'];
 
+  // Default Supabase credentials (HOMES CX project)
+  const DEFAULT_URL = 'https://bqzzszmhzfkcbgoyavcn.supabase.co';
+  const DEFAULT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJxenpzem1oemZrY2Jnb3lhdmNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5ODU2NTAsImV4cCI6MjA4OTU2MTY1MH0.ScflftO0AwvhfKvr77JuxM4-QEaaLJJNZ-OTYHPU_3Q';
+
   function migrateConfig() {
     if (localStorage.getItem(CONFIG_KEY)) return;
     for (const k of LEGACY_KEYS) {
@@ -67,9 +71,15 @@ const HomesSB = (() => {
 
   async function autoConnect() {
     const cfg = getConfig();
-    if (cfg.url && cfg.key) {
-      const ok = await init(cfg.url, cfg.key);
-      if (ok) HomesApp.emit('sb:connected');
+    const url = cfg.url || DEFAULT_URL;
+    const key = cfg.key || DEFAULT_KEY;
+    if (url && key) {
+      const ok = await init(url, key);
+      if (ok) {
+        // Save so settings page shows current values
+        if (!cfg.url) saveConfig(url, key);
+        HomesApp.emit('sb:connected');
+      }
       return ok;
     }
     return false;
