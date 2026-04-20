@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>홈즈컴퍼니 코리빙 고객 대시보드</title>
+<link href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-sub: #475569;
+    --text-muted: #94a3b8;
+    --blue: #3b82f6;
+    --blue-soft: #dbeafe;
+    --green: #10b981;
+    --green-soft: #d1fae5;
+    --amber: #f59e0b;
+    --amber-soft: #fef3c7;
+    --red: #ef4444;
+    --red-soft: #fee2e2;
+    --violet: #8b5cf6;
+    --violet-soft: #ede9fe;
+    --rose: #f43f5e;
+    --rose-soft: #ffe4e6;
+    --pink: #ec4899;
+    --sky: #0ea5e9;
+    --sky-soft: #e0f2fe;
+    --slate: #64748b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== HERO ========== */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: #fff;
+    padding: 64px 32px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%; right: -10%;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(59,130,246,0.22) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50%; left: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    background: rgba(59,130,246,0.18);
+    border: 1px solid rgba(59,130,246,0.35);
+    color: #bfdbfe;
+    font-size: 12px; font-weight: 600;
+    border-radius: 9999px;
+    letter-spacing: 0.02em;
+    margin-bottom: 18px;
+  }
+  .hero-badge .pulse {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #60a5fa;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .hero h1 {
+    font-size: 38px; font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.2;
+  }
+  .hero h1 .accent {
+    background: linear-gradient(90deg, #60a5fa, #c4b5fd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    font-size: 16px; color: #cbd5e1;
+    margin-top: 14px; line-height: 1.6;
+    max-width: 720px;
+  }
+  .hero-questions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+  }
+  .hero-q {
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+  }
+  .hero-q-num {
+    font-size: 11px; color: #60a5fa; font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .hero-q-text {
+    font-size: 14px; color: #e2e8f0;
+    margin-top: 4px; font-weight: 500;
+  }
+
+  /* ========== CONTAINER ========== */
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+  /* ========== NAV ========== */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  .nav-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 0 24px;
+    display: flex; align-items: center; gap: 6px;
+    overflow-x: auto;
+  }
+  .nav a {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-sub);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .nav a:hover { background: var(--bg); color: var(--text); }
+  .nav-icon { font-size: 14px; margin-right: 4px; }
+
+  /* ========== SECTION ========== */
+  .section { margin-top: 56px; }
+  .section-head { margin-bottom: 24px; }
+  .section-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 4px 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 26px; font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    font-size: 14px; color: var(--text-sub);
+  }
+
+  /* ========== KPI ========== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .kpi:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+  }
+  .kpi-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .kpi-label {
+    font-size: 12px; color: var(--text-muted);
+    font-weight: 500;
+  }
+  .kpi-icon {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .kpi-value {
+    font-size: 30px; font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .kpi-sub {
+    font-size: 12px; color: var(--text-sub);
+    margin-top: 4px;
+  }
+  .kpi-trend {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 8px;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .trend-up { background: var(--green-soft); color: var(--green); }
+  .trend-down { background: var(--red-soft); color: var(--red); }
+  .trend-flat { background: #f1f5f9; color: var(--slate); }
+
+  /* ========== CARD ========== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .card-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .card-title {
+    font-size: 16px; font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .card-sub {
+    font-size: 12px; color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .card-badge {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text-sub);
+  }
+
+  /* ========== GRID HELPERS ========== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-asym {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+  }
+
+  /* ========== CHART ========== */
+  .chart-wrap {
+    position: relative;
+    height: 260px;
+  }
+  .chart-wrap.tall { height: 320px; }
+  .chart-wrap.xl { height: 360px; }
+
+  /* ========== PERSONA ========== */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .persona {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .persona::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+  .persona-1::before { background: linear-gradient(90deg, var(--blue), var(--sky)); }
+  .persona-2::before { background: linear-gradient(90deg, var(--pink), var(--rose)); }
+  .persona-3::before { background: linear-gradient(90deg, var(--amber), var(--red)); }
+
+  .persona-avatar {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .persona-1 .persona-avatar { background: var(--blue-soft); }
+  .persona-2 .persona-avatar { background: var(--rose-soft); }
+  .persona-3 .persona-avatar { background: var(--amber-soft); }
+
+  .persona-label {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+  .persona-name {
+    font-size: 18px; font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 2px;
+  }
+  .persona-tagline {
+    font-size: 12px; color: var(--text-sub);
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .persona-facts {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .persona-fact {
+    display: flex; justify-content: space-between;
+    font-size: 12px;
+  }
+  .persona-fact-key { color: var(--text-muted); }
+  .persona-fact-val { color: var(--text); font-weight: 600; text-align: right; }
+
+  /* ========== BRANCH MATRIX ========== */
+  .branch-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .branch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .branch-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15,23,42,0.05);
+  }
+  .branch-card .tier {
+    position: absolute; top: 12px; right: 14px;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+  .tier-l { background: #eef2ff; color: #4338ca; }
+  .tier-m { background: #ecfdf5; color: #047857; }
+  .tier-s { background: #fef3c7; color: #b45309; }
+  .branch-card .model {
+    position: absolute; top: 12px; left: 14px;
+    font-size: 10px; font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.08em;
+  }
+  .model-studio { background: #dbeafe; color: #1d4ed8; }
+  .model-stay { background: #ede9fe; color: #6d28d9; }
+  .model-inline {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-right: 4px;
+  }
+  .branch-name {
+    font-size: 15px; font-weight: 700;
+    margin-top: 22px;
+    margin-bottom: 2px;
+    letter-spacing: -0.02em;
+  }
+  .branch-rooms {
+    font-size: 11px; color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+  .branch-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .branch-metric {
+    padding: 8px 10px;
+    background: var(--bg);
+    border-radius: 8px;
+  }
+  .branch-metric .label {
+    font-size: 10px; color: var(--text-muted);
+    font-weight: 500;
+  }
+  .branch-metric .val {
+    font-size: 14px; font-weight: 700;
+    margin-top: 2px;
+  }
+  .branch-tag {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-right: 4px; margin-bottom: 4px;
+  }
+
+  /* ========== COMPARE TABLE ========== */
+  .compare-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 920px;
+  }
+  table.compare thead th {
+    background: #f8fafc;
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text-sub);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  table.compare tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+  table.compare tbody tr:last-child td { border-bottom: none; }
+  table.compare tbody tr:hover { background: #fafbfc; }
+  table.compare .branch-label {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  table.compare .bar-cell {
+    min-width: 140px;
+  }
+  .minibar {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .minibar-track {
+    flex: 1; height: 6px;
+    background: #f1f5f9;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .minibar-fill {
+    height: 100%;
+    border-radius: 999px;
+  }
+  .minibar-val {
+    font-size: 12px; font-weight: 700;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* ========== INSIGHT ========== */
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .insight {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .insight::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 22px; bottom: 22px;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+  }
+  .insight-1::before { background: var(--blue); }
+  .insight-2::before { background: var(--pink); }
+  .insight-3::before { background: var(--amber); }
+  .insight-4::before { background: var(--green); }
+  .insight-5::before { background: var(--violet); }
+  .insight-6::before { background: var(--red); }
+
+  .insight-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .insight-num {
+    font-size: 11px; font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 6px;
+    letter-spacing: 0.08em;
+  }
+  .insight-1 .insight-num { background: var(--blue-soft); color: var(--blue); }
+  .insight-2 .insight-num { background: var(--rose-soft); color: var(--pink); }
+  .insight-3 .insight-num { background: var(--amber-soft); color: var(--amber); }
+  .insight-4 .insight-num { background: var(--green-soft); color: var(--green); }
+  .insight-5 .insight-num { background: var(--violet-soft); color: var(--violet); }
+  .insight-6 .insight-num { background: var(--red-soft); color: var(--red); }
+
+  .insight-title {
+    font-size: 16px; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .insight-body {
+    font-size: 13px; color: var(--text-sub);
+    line-height: 1.7;
+  }
+  .insight-body strong { color: var(--text); font-weight: 700; }
+  .insight-kpi {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: 10px;
+  }
+  .insight-kpi .big {
+    font-size: 24px; font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .insight-kpi .label {
+    font-size: 12px; color: var(--text-sub);
+  }
+
+  /* ========== RECOMMEND ========== */
+  .rec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .rec {
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid;
+  }
+  .rec-1 { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: #bfdbfe; }
+  .rec-2 { background: linear-gradient(135deg, #fdf2f8, #fce7f3); border-color: #fbcfe8; }
+  .rec-3 { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-color: #fde68a; }
+  .rec-tag {
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .rec-1 .rec-tag { color: #1d4ed8; }
+  .rec-2 .rec-tag { color: #be185d; }
+  .rec-3 .rec-tag { color: #b45309; }
+  .rec-title {
+    font-size: 15px; font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    color: #0f172a;
+  }
+  .rec-body {
+    font-size: 12px; color: #475569;
+    line-height: 1.65;
+  }
+  .rec-list {
+    margin-top: 10px;
+    list-style: none;
+  }
+  .rec-list li {
+    font-size: 12px;
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+    color: #334155;
+  }
+  .rec-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+  }
+
+  /* ========== FOOTER ========== */
+  .footer {
+    margin-top: 80px;
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer-text {
+    font-size: 12px; color: var(--text-muted);
+    line-height: 1.8;
+  }
+  .footer-text strong { color: var(--text-sub); }
+
+  /* ========== UTILITY ========== */
+  .spacer-lg { height: 48px; }
+  .txt-red { color: var(--red); }
+  .txt-green { color: var(--green); }
+  .txt-amber { color: var(--amber); }
+  .txt-blue { color: var(--blue); }
+  .txt-muted { color: var(--text-muted); }
+
+  .tag {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+  }
+  .tag-blue { background: var(--blue-soft); color: var(--blue); }
+  .tag-green { background: var(--green-soft); color: var(--green); }
+  .tag-amber { background: var(--amber-soft); color: var(--amber); }
+  .tag-red { background: var(--red-soft); color: var(--red); }
+  .tag-violet { background: var(--violet-soft); color: var(--violet); }
+
+  /* data gap box */
+  .gap-box {
+    margin-top: 20px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #fef2f2, #fff1f2);
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+  }
+  .gap-box-title {
+    font-size: 13px; font-weight: 800;
+    color: #b91c1c;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .gap-box-body {
+    font-size: 12px; color: #7f1d1d;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-questions { grid-template-columns: 1fr; }
+    .grid-2, .grid-3, .grid-asym, .insight-grid, .rec-grid { grid-template-columns: 1fr; }
+    .persona-grid { grid-template-columns: 1fr; }
+    .branch-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      홈즈컴퍼니 · 코리빙 고객 인사이트 대시보드
+    </div>
+    <h1>우리 홈즈의 고객은<br><span class="accent">누구이며, 어디서, 무엇을 원하는가</span></h1>
+    <p class="hero-sub">
+      코리빙 고객정보 구조도 7개 도메인 × 46항목 기준, <strong style="color:#fff;">STUDIO(코리빙 주거 · 7지점 457호실)</strong>와 <strong style="color:#fff;">STAY(호텔 · 수원 1지점)</strong>의<br>
+      이중 비즈니스 구조를 리더가 한눈에 이해할 수 있도록 재구성한 대시보드입니다.
+    </p>
+    <div class="hero-questions">
+      <div class="hero-q">
+        <div class="hero-q-num">QUESTION 01</div>
+        <div class="hero-q-text">홈즈의 고객은 어떤 사람들인가?</div>
+      </div>
+      <div class="hero-q">
+        <div class="hero-q-num">QUESTION 02</div>
+        <div class="hero-q-text">지점별 어떤 특징이 있는가?</div>
+      </div>
+      <div class="hero-q">
+        <div class="hero-q-num">QUESTION 03</div>
+        <div class="hero-q-text">리더가 읽어야 할 인사이트는?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#overview"><span class="nav-icon">◉</span>전체 현황</a>
+    <a href="#who"><span class="nav-icon">◉</span>우리 고객은 누구인가</a>
+    <a href="#persona"><span class="nav-icon">◉</span>3대 페르소나</a>
+    <a href="#branch"><span class="nav-icon">◉</span>지점별 특징</a>
+    <a href="#journey"><span class="nav-icon">◉</span>고객 여정</a>
+    <a href="#insight"><span class="nav-icon">◉</span>리더 인사이트</a>
+    <a href="#action"><span class="nav-icon">◉</span>권장 액션</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ==================== 01. 전체 현황 ==================== -->
+<section class="section" id="overview">
+  <div class="section-head">
+    <div class="section-label" style="background:#eff6ff; color:#2563eb;">SECTION 01 · OVERVIEW</div>
+    <h2 class="section-title">한눈에 보는 홈즈 고객 현황</h2>
+    <p class="section-desc">STUDIO 7지점 457호실 (코리빙 주거) + STAY 1지점 (호텔) — 이중 비즈니스 구조</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">STUDIO 호실</span>
+        <div class="kpi-icon" style="background:var(--blue-soft); color:var(--blue);">🏠</div>
+      </div>
+      <div class="kpi-value">457</div>
+      <div class="kpi-sub">코리빙 주거 · 7지점</div>
+      <span class="kpi-trend trend-flat">회기·가산·선정릉·안암·남영·망원·원효로</span>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">STUDIO 점유율</span>
+        <div class="kpi-icon" style="background:var(--green-soft); color:var(--green);">📊</div>
+      </div>
+      <div class="kpi-value">77.2<span style="font-size:18px;">%</span></div>
+      <div class="kpi-sub">재실 353 / 전체 457</div>
+      <span class="kpi-trend trend-up">입주대기 20호실</span>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">외국인 비율</span>
+        <div class="kpi-icon" style="background:var(--sky-soft); color:var(--sky);">🌏</div>
+      </div>
+      <div class="kpi-value">36<span style="font-size:18px;">%</span></div>
+      <div class="kpi-sub">STUDIO 전체 가중 추정</div>
+      <span class="kpi-trend trend-flat">회기 66.7% · 가산 45% · 선정릉 18%</span>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">평균 계약기간</span>
+        <div class="kpi-icon" style="background:var(--amber-soft); color:var(--amber);">📅</div>
+      </div>
+      <div class="kpi-value">224<span style="font-size:18px;">일</span></div>
+      <div class="kpi-sub">STUDIO 기준 · 약 7.5개월</div>
+      <span class="kpi-trend trend-flat">STAY는 1일~수개월 혼재</span>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">여성 비율</span>
+        <div class="kpi-icon" style="background:var(--rose-soft); color:var(--pink);">👩</div>
+      </div>
+      <div class="kpi-value">67<span style="font-size:18px;">%</span></div>
+      <div class="kpi-sub">개인 계약자 · 남/녀 2종</div>
+      <span class="kpi-trend trend-flat">여 67% · 남 33%</span>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">사업자 계약</span>
+        <div class="kpi-icon" style="background:var(--amber-soft); color:var(--amber);">🏢</div>
+      </div>
+      <div class="kpi-value">15<span style="font-size:18px;">%</span></div>
+      <div class="kpi-sub">법인 + 개인사업자</div>
+      <span class="kpi-trend trend-flat">개인 85% · 사업자 15%</span>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">평균 연령</span>
+        <div class="kpi-icon" style="background:var(--violet-soft); color:var(--violet);">🎂</div>
+      </div>
+      <div class="kpi-value">38.3<span style="font-size:18px;">세</span></div>
+      <div class="kpi-sub">중앙값 36세 · 21~65세</div>
+      <span class="kpi-trend trend-down">입력율 16.6%</span>
+    </div>
+    <div class="kpi">
+      <div class="kpi-top">
+        <span class="kpi-label">데이터 커버율</span>
+        <div class="kpi-icon" style="background:var(--red-soft); color:var(--red);">⚠️</div>
+      </div>
+      <div class="kpi-value txt-red">37<span style="font-size:18px;">%</span></div>
+      <div class="kpi-sub">46항목 중 17항목만 수집</div>
+      <span class="kpi-trend trend-down">Lifestyle 22% · 공간이용 17%</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 02. 우리 고객은 누구인가 ==================== -->
+<section class="section" id="who">
+  <div class="section-head">
+    <div class="section-label" style="background:#f5f3ff; color:#7c3aed;">SECTION 02 · CUSTOMER SEGMENTS</div>
+    <h2 class="section-title">우리 홈즈의 고객은 누구인가</h2>
+    <p class="section-desc">Identity(성별·연령·국적·직업) + Journey(거주 목적·유입 채널) 교차 분석</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">연령 분포</div>
+          <div class="card-sub">30대 중심, 20–40대가 79%</div>
+        </div>
+        <span class="card-badge">N=76 (입력율 16.6%)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ageChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">성별 구성 (개인 계약자)</div>
+          <div class="card-sub">여성 다수 — 안전 · 편의 중심 운영 필요</div>
+        </div>
+        <span class="card-badge">남 / 녀 2종</span>
+      </div>
+      <div class="chart-wrap"><canvas id="genderChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">계약 주체 구성</div>
+          <div class="card-sub">개인 vs 사업자(법인 + 개인사업자) — B2B 채널 존재</div>
+        </div>
+        <span class="card-badge">전체 기준</span>
+      </div>
+      <div class="chart-wrap"><canvas id="subjectChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">국적 구성 (STUDIO 전체)</div>
+          <div class="card-sub">Studio 7개 지점 가중 추정 — 외국인이 1/3 이상</div>
+        </div>
+        <span class="card-badge tag-red">추정 36% 외국인</span>
+      </div>
+      <div class="chart-wrap"><canvas id="nationChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px;">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">직업 · 거주 목적</div>
+          <div class="card-sub">직장인이 절반, 학생 1/3 — 이중 타깃 구조</div>
+        </div>
+        <span class="card-badge">가산·회기 수집</span>
+      </div>
+      <div class="chart-wrap"><canvas id="jobChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">모델별 국적 비교</div>
+          <div class="card-sub">STUDIO(주거)의 글로벌화 vs STAY(호텔)의 단기 인바운드</div>
+        </div>
+        <span class="card-badge">Studio vs Stay</span>
+      </div>
+      <div class="chart-wrap"><canvas id="modelNationChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-head">
+      <div>
+        <div class="card-title">유입 채널 순위</div>
+        <div class="card-sub">부동산 중심 오프라인 강세 · 플랫폼(OTA)이 단기 시장 견인</div>
+      </div>
+      <span class="card-badge">가산 · 안암 · 회기 수집 기준</span>
+    </div>
+    <div class="chart-wrap tall"><canvas id="channelChart"></canvas></div>
+  </div>
+</section>
+
+<!-- ==================== 03. 3대 페르소나 ==================== -->
+<section class="section" id="persona">
+  <div class="section-head">
+    <div class="section-label" style="background:#ecfdf5; color:#059669;">SECTION 03 · PERSONA</div>
+    <h2 class="section-title">홈즈를 채우는 3대 고객 페르소나</h2>
+    <p class="section-desc">현재 수집 데이터에서 재구성한 대표 고객 유형 — 지점 전략의 베이스라인</p>
+  </div>
+
+  <div class="persona-grid">
+    <div class="persona persona-1">
+      <div class="persona-avatar">🧑‍💼</div>
+      <div class="persona-label">PERSONA 01 · LONG-STAY</div>
+      <div class="persona-name">안정지향 직장인</div>
+      <div class="persona-tagline">"출퇴근 편하고 퍼니시드된 장기 거주지가 필요해요"</div>
+      <div class="persona-facts">
+        <div class="persona-fact"><span class="persona-fact-key">연령</span><span class="persona-fact-val">30–40대</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">거주목적</span><span class="persona-fact-val">직장 · 파견근무</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">계약기간</span><span class="persona-fact-val">6~12개월</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">주요 지점</span><span class="persona-fact-val">선정릉 · 아코모 가산 · 수원(STAY)</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">유입</span><span class="persona-fact-val">부동산 · 기업제휴</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">가격대</span><span class="persona-fact-val">월 90~150만원</span></div>
+      </div>
+    </div>
+
+    <div class="persona persona-2">
+      <div class="persona-avatar">🎓</div>
+      <div class="persona-label">PERSONA 02 · INTL STUDENT</div>
+      <div class="persona-name">글로벌 학생 · 유학생</div>
+      <div class="persona-tagline">"한국에서 학기 단위로 안전하게 살고 싶어요"</div>
+      <div class="persona-facts">
+        <div class="persona-fact"><span class="persona-fact-key">연령</span><span class="persona-fact-val">20대</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">국적</span><span class="persona-fact-val">영국·태국·중국 등</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">거주목적</span><span class="persona-fact-val">학업 · 어학연수</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">계약기간</span><span class="persona-fact-val">3~6개월</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">주요 지점</span><span class="persona-fact-val">아코모 회기 · 안암</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">유입</span><span class="persona-fact-val">에이전시 · 플랫폼</span></div>
+      </div>
+    </div>
+
+    <div class="persona persona-3">
+      <div class="persona-avatar">🧳</div>
+      <div class="persona-label">PERSONA 03 · SHORT-STAY</div>
+      <div class="persona-name">단기 투숙 · 인바운드</div>
+      <div class="persona-tagline">"1박~1달, 도시 경험을 즐기러 왔어요"</div>
+      <div class="persona-facts">
+        <div class="persona-fact"><span class="persona-fact-key">연령</span><span class="persona-fact-val">20–30대</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">구성</span><span class="persona-fact-val">2인 투숙 67%</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">거주목적</span><span class="persona-fact-val">관광 · 출장</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">계약기간</span><span class="persona-fact-val">1일~4주</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">주요 지점</span><span class="persona-fact-val">수원 스테이(STAY) · 아코모 회기</span></div>
+        <div class="persona-fact"><span class="persona-fact-key">유입</span><span class="persona-fact-val">트립닷컴 · 아고다</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 04. 지점별 특징 ==================== -->
+<section class="section" id="branch">
+  <div class="section-head">
+    <div class="section-label" style="background:#fffbeb; color:#d97706;">SECTION 04 · BRANCH PROFILE</div>
+    <h2 class="section-title">지점별 고객 특징 — 지점마다 다른 얼굴</h2>
+    <p class="section-desc">두 개의 비즈니스 모델 · <span class="model-inline model-studio">STUDIO</span> 코리빙 주거 7지점 + <span class="model-inline model-stay">STAY</span> 호텔 1지점</p>
+  </div>
+
+  <div style="margin-bottom:14px; display:flex; gap:8px; align-items:center; font-size:12px; color:var(--text-sub);">
+    <span style="font-weight:800; color:var(--text);">STUDIO 모델 (코리빙 주거) · 457호실 · 7지점</span>
+  </div>
+
+  <div class="branch-grid">
+
+    <div class="branch-card">
+      <span class="model model-studio">STUDIO</span>
+      <span class="tier tier-l">LARGE</span>
+      <div class="branch-name">아코모 회기</div>
+      <div class="branch-rooms">152호실 · 홈즈 최대 규모</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">점유율</div><div class="val txt-green">84.5%</div></div>
+        <div class="branch-metric"><div class="label">외국인</div><div class="val txt-blue">66.7%</div></div>
+      </div>
+      <div>
+        <span class="branch-tag">🌏 글로벌 학생</span>
+        <span class="branch-tag">🛋 풀퍼니시드</span>
+        <span class="branch-tag">🌿 테라스</span>
+      </div>
+    </div>
+
+    <div class="branch-card">
+      <span class="model model-studio">STUDIO</span>
+      <span class="tier tier-l">LARGE</span>
+      <div class="branch-name">아코모 가산</div>
+      <div class="branch-rooms">80호실 · 가산디지털단지</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">점유율</div><div class="val txt-green">82.9%</div></div>
+        <div class="branch-metric"><div class="label">고객층</div><div class="val">내/외 혼재</div></div>
+      </div>
+      <div>
+        <span class="branch-tag">💼 IT 직장인</span>
+        <span class="branch-tag">🛋 풀퍼니시드</span>
+        <span class="branch-tag">🔁 내/외국인 구분</span>
+      </div>
+    </div>
+
+    <div class="branch-card">
+      <span class="model model-studio">STUDIO</span>
+      <span class="tier tier-m">MEDIUM</span>
+      <div class="branch-name">선정릉</div>
+      <div class="branch-rooms">66호실 · 강남 접근성</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">점유율</div><div class="val txt-green">~85%</div></div>
+        <div class="branch-metric"><div class="label">평형</div><div class="val">9~10평</div></div>
+      </div>
+      <div>
+        <span class="branch-tag">💼 직장인 중심</span>
+        <span class="branch-tag">📅 장기 거주</span>
+      </div>
+    </div>
+
+    <div class="branch-card">
+      <span class="model model-studio">STUDIO</span>
+      <span class="tier tier-m">MEDIUM</span>
+      <div class="branch-name">남영</div>
+      <div class="branch-rooms">64호실 · 용산 권역</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">데이터</div><div class="val txt-muted">—</div></div>
+        <div class="branch-metric"><div class="label">상태</div><div class="val">운영중</div></div>
+      </div>
+      <div>
+        <span class="branch-tag txt-muted">수집 데이터 부족</span>
+      </div>
+    </div>
+
+    <div class="branch-card">
+      <span class="model model-studio">STUDIO</span>
+      <span class="tier tier-m">MEDIUM</span>
+      <div class="branch-name">안암</div>
+      <div class="branch-rooms">60호실 · 고려대 권역</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">유입</div><div class="val">부동산·온라인</div></div>
+        <div class="branch-metric"><div class="label">DB</div><div class="val txt-green">상세</div></div>
+      </div>
+      <div>
+        <span class="branch-tag">🎓 학생 · 대학가</span>
+        <span class="branch-tag">🔑 홈버튼</span>
+      </div>
+    </div>
+
+    <div class="branch-card">
+      <span class="model model-studio">STUDIO</span>
+      <span class="tier tier-s">SMALL</span>
+      <div class="branch-name">망원</div>
+      <div class="branch-rooms">18호실 · 마포</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">규모</div><div class="val">소형</div></div>
+        <div class="branch-metric"><div class="label">상권</div><div class="val">문화·핫플</div></div>
+      </div>
+      <div>
+        <span class="branch-tag">🎨 라이프스타일</span>
+        <span class="branch-tag txt-muted">데이터 부족</span>
+      </div>
+    </div>
+
+    <div class="branch-card">
+      <span class="model model-studio">STUDIO</span>
+      <span class="tier tier-s">SMALL</span>
+      <div class="branch-name">원효로 240</div>
+      <div class="branch-rooms">17호실 · 용산 서부</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">규모</div><div class="val">소형</div></div>
+        <div class="branch-metric"><div class="label">상태</div><div class="val">운영중</div></div>
+      </div>
+      <div>
+        <span class="branch-tag txt-muted">데이터 부족</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin:22px 0 14px; display:flex; gap:8px; align-items:center; font-size:12px; color:var(--text-sub);">
+    <span style="font-weight:800; color:var(--text);">STAY 모델 (호텔 · 숙박) · 1지점</span>
+  </div>
+
+  <div class="branch-grid">
+    <div class="branch-card" style="grid-column: span 2;">
+      <span class="model model-stay">STAY</span>
+      <span class="tier tier-m">SPECIAL</span>
+      <div class="branch-name">수원 스테이</div>
+      <div class="branch-rooms">장·단기 혼합 운영 · 호텔 모델</div>
+      <div class="branch-metrics">
+        <div class="branch-metric"><div class="label">장기</div><div class="val">삼성 파견</div></div>
+        <div class="branch-metric"><div class="label">단기</div><div class="val">인바운드</div></div>
+      </div>
+      <div>
+        <span class="branch-tag">✈️ OTA 유입</span>
+        <span class="branch-tag">🏢 기업제휴</span>
+        <span class="branch-tag">🛎 호텔형 운영</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 지점별 규모 비교 차트 -->
+  <div class="card" style="margin-top:20px;">
+    <div class="card-head">
+      <div>
+        <div class="card-title">STUDIO 지점별 규모 · 점유율 비교</div>
+        <div class="card-sub">호실수(막대) vs. 점유율(라인) — 회기·가산·선정릉 3톱 구조 (STAY 수원은 별도 운영)</div>
+      </div>
+      <span class="card-badge">STUDIO 7지점</span>
+    </div>
+    <div class="chart-wrap tall"><canvas id="branchCompareChart"></canvas></div>
+  </div>
+
+  <!-- 지점별 세그먼트 매트릭스 -->
+  <div class="card" style="margin-top:16px;">
+    <div class="card-head">
+      <div>
+        <div class="card-title">지점별 고객 세그먼트 매트릭스</div>
+        <div class="card-sub">한 줄로 정리한 지점 포지셔닝</div>
+      </div>
+    </div>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>모델</th>
+            <th>지점</th>
+            <th>규모</th>
+            <th class="bar-cell">점유율</th>
+            <th class="bar-cell">외국인 비율</th>
+            <th>주력 페르소나</th>
+            <th>차별 포인트</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="model-inline model-studio">STUDIO</span></td>
+            <td class="branch-label">아코모 회기</td>
+            <td>152실</td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:84.5%; background:var(--green);"></div></div><span class="minibar-val">84.5%</span></div></td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:66.7%; background:var(--sky);"></div></div><span class="minibar-val">66.7%</span></div></td>
+            <td>글로벌 학생 · 장기</td>
+            <td>테라스 · 풀퍼니시드 · 다국적</td>
+          </tr>
+          <tr>
+            <td><span class="model-inline model-studio">STUDIO</span></td>
+            <td class="branch-label">아코모 가산</td>
+            <td>80실</td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:82.9%; background:var(--green);"></div></div><span class="minibar-val">82.9%</span></div></td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:45%; background:var(--sky);"></div></div><span class="minibar-val">추정 ~45%</span></div></td>
+            <td>IT 직장인 · 파견</td>
+            <td>풀퍼니시드 · 내/외국인 구분 운영</td>
+          </tr>
+          <tr>
+            <td><span class="model-inline model-studio">STUDIO</span></td>
+            <td class="branch-label">선정릉</td>
+            <td>66실</td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:85%; background:var(--green);"></div></div><span class="minibar-val">~85%</span></div></td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:18%; background:var(--sky);"></div></div><span class="minibar-val">낮음</span></div></td>
+            <td>강남 직장인 · 장기</td>
+            <td>9~10평 · 비즈니스 편의</td>
+          </tr>
+          <tr>
+            <td><span class="model-inline model-studio">STUDIO</span></td>
+            <td class="branch-label">안암</td>
+            <td>60실</td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:70%; background:var(--green);"></div></div><span class="minibar-val">미집계</span></div></td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:35%; background:var(--sky);"></div></div><span class="minibar-val">혼재</span></div></td>
+            <td>대학생 · 신입사회인</td>
+            <td>홈버튼 스마트키 · 부동산 유입</td>
+          </tr>
+          <tr>
+            <td><span class="model-inline model-studio">STUDIO</span></td>
+            <td class="branch-label">남영</td>
+            <td>64실</td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:70%; background:var(--slate);"></div></div><span class="minibar-val">미집계</span></div></td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:30%; background:var(--slate);"></div></div><span class="minibar-val">미집계</span></div></td>
+            <td>용산권 직장인</td>
+            <td>교통 허브 · 데이터 보강 필요</td>
+          </tr>
+          <tr>
+            <td><span class="model-inline model-studio">STUDIO</span></td>
+            <td class="branch-label">망원 · 원효로</td>
+            <td>18+17실</td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:70%; background:var(--slate);"></div></div><span class="minibar-val">미집계</span></div></td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:25%; background:var(--slate);"></div></div><span class="minibar-val">미집계</span></div></td>
+            <td>소규모 라이프스타일</td>
+            <td>로컬 상권 · 브랜드 실험장</td>
+          </tr>
+          <tr>
+            <td><span class="model-inline model-stay">STAY</span></td>
+            <td class="branch-label">수원 스테이</td>
+            <td>혼합</td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:75%; background:var(--green);"></div></div><span class="minibar-val">높음</span></div></td>
+            <td class="bar-cell"><div class="minibar"><div class="minibar-track"><div class="minibar-fill" style="width:50%; background:var(--sky);"></div></div><span class="minibar-val">단기 다수</span></div></td>
+            <td>삼성파견 + 관광객</td>
+            <td>장·단기 이중 운영 · OTA</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="gap-box">
+    <div class="gap-box-title">⚠️ 지점 비교가 어려운 구조적 문제</div>
+    <div class="gap-box-body">
+      현재 <strong>가산·안암·회기 3개 지점만 상세 고객 데이터</strong>가 있고, 나머지 5개 지점은 기본 계약정보 중심이라 동일 기준의 비교가 제한적입니다.
+      특히 <strong>남영·망원·원효로240</strong>은 국적·연령·유입채널 데이터가 사실상 공란이어서, 이 대시보드의 지점 비교는 "보이는 만큼"만 나타냅니다.
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 05. 고객 여정 ==================== -->
+<section class="section" id="journey">
+  <div class="section-head">
+    <div class="section-label" style="background:#fdf2f8; color:#be185d;">SECTION 05 · JOURNEY</div>
+    <h2 class="section-title">고객은 어떻게 들어와, 얼마나 머물고, 어떻게 떠나는가</h2>
+    <p class="section-desc">유입 → 계약 → 거주 → 퇴거·재계약의 흐름과 단계별 핵심 수치</p>
+  </div>
+
+  <div class="grid-asym">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">계약기간 분포 (STUDIO · 회기 표본)</div>
+          <div class="card-sub">30일 단기부터 365일 장기까지 — 양극단 구조</div>
+        </div>
+        <span class="card-badge">평균 224일</span>
+      </div>
+      <div class="chart-wrap tall"><canvas id="tenureChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">유입 단계 지표</div>
+          <div class="card-sub">Funnel 관점의 현재 전환 현황</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <div style="padding:14px 0; border-bottom:1px dashed var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div>
+              <div style="font-size:12px; color:var(--text-muted);">유입 1순위</div>
+              <div style="font-size:18px; font-weight:700; margin-top:2px;">부동산 중개</div>
+            </div>
+            <div class="tag tag-blue">#1</div>
+          </div>
+        </div>
+        <div style="padding:14px 0; border-bottom:1px dashed var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div>
+              <div style="font-size:12px; color:var(--text-muted);">유입 2순위</div>
+              <div style="font-size:18px; font-weight:700; margin-top:2px;">플랫폼 (OTA·앱)</div>
+            </div>
+            <div class="tag tag-violet">#2</div>
+          </div>
+        </div>
+        <div style="padding:14px 0; border-bottom:1px dashed var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div>
+              <div style="font-size:12px; color:var(--text-muted);">신규 계약</div>
+              <div style="font-size:18px; font-weight:700; margin-top:2px;">131건 <span style="font-size:12px; color:var(--text-sub);">(28.7%)</span></div>
+            </div>
+            <div class="tag tag-green">신규</div>
+          </div>
+        </div>
+        <div style="padding:14px 0; border-bottom:1px dashed var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div>
+              <div style="font-size:12px; color:var(--text-muted);">재계약</div>
+              <div style="font-size:18px; font-weight:700; margin-top:2px;">51건 <span style="font-size:12px; color:var(--text-sub);">(11.2%)</span></div>
+            </div>
+            <div class="tag tag-violet">재계약</div>
+          </div>
+        </div>
+        <div style="padding:14px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div>
+              <div style="font-size:12px; color:var(--text-muted);">평균 단가 (월)</div>
+              <div style="font-size:18px; font-weight:700; margin-top:2px;">98~258만원</div>
+            </div>
+            <div class="tag tag-amber">가격대</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-head">
+      <div>
+        <div class="card-title"><span class="model-inline model-stay">STAY</span> 수원 스테이 : 장기 vs 단기 고객 해부</div>
+        <div class="card-sub">STAY 모델 단일 지점 · 같은 건물 안에서도 장·단기가 완전히 다른 비즈니스</div>
+      </div>
+      <span class="card-badge tag-amber">STAY 전용</span>
+    </div>
+    <div class="compare-wrap">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>장기 고객 (2–12개월)</th>
+            <th>단기 고객 (1일–4주)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="branch-label">대표 페르소나</td>
+            <td>3040 남성 직장인 · 삼성 파견직</td>
+            <td>2030 내/외국인 관광객 · 2인 투숙 67%</td>
+          </tr>
+          <tr>
+            <td class="branch-label">방문 목적</td>
+            <td>장기출장 · 이사/인테리어 대기</td>
+            <td>수원 관광 · 인바운드 패키지</td>
+          </tr>
+          <tr>
+            <td class="branch-label">상품 선호</td>
+            <td>HD타입 ~94만원, 평균 2개월</td>
+            <td>SD/ST 타입 · 1박 66%</td>
+          </tr>
+          <tr>
+            <td class="branch-label">유입 경로</td>
+            <td>부동산 · 기업 제휴 (오프라인)</td>
+            <td>OTA (트립닷컴·아고다) · 여행사 (온라인)</td>
+          </tr>
+          <tr>
+            <td class="branch-label">주요 불만</td>
+            <td>주차 부족 · 소음/냄새 · 결제 번거로움</td>
+            <td>주차 부족 · 객실 컨디션 · 조식/주변정보</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 06. 리더 인사이트 ==================== -->
+<section class="section" id="insight">
+  <div class="section-head">
+    <div class="section-label" style="background:#fef2f2; color:#dc2626;">SECTION 06 · LEADER INSIGHTS</div>
+    <h2 class="section-title">리더가 읽어야 할 6가지 인사이트</h2>
+    <p class="section-desc">데이터에서 드러난 기회와 위험 — 다음 분기 의사결정에 반영</p>
+  </div>
+
+  <div class="insight-grid">
+
+    <div class="insight insight-1">
+      <div class="insight-head">
+        <span class="insight-num">INSIGHT 01</span>
+        <span class="insight-title">홈즈는 이미 "글로벌 코리빙"이다</span>
+      </div>
+      <div class="insight-body">
+        STUDIO 전체 외국인 비율 <strong>추정 36%</strong> · 회기는 <strong>66.7%</strong>가 외국인입니다. 그럼에도 <strong>거주 언어·다국어 안내·비자 정보 수집은 전무</strong>합니다.
+        국적·체류 정보가 없으면 현장 운영(계약 서류·안내·안전 응대)이 속인지에 의존하게 되어, 글로벌 고객 확장 시 리스크가 누적됩니다.
+      </div>
+      <div class="insight-kpi">
+        <span class="big txt-blue">36%</span>
+        <span class="label">STUDIO 외국인 추정 · 회기 단독 66.7%</span>
+      </div>
+    </div>
+
+    <div class="insight insight-2">
+      <div class="insight-head">
+        <span class="insight-num">INSIGHT 02</span>
+        <span class="insight-title">여성 · 30대 · 직장인이 주인공</span>
+      </div>
+      <div class="insight-body">
+        개인 계약자 중 여성 <strong>67%</strong> · 평균 38.3세 · 직장인 47%. <strong>홈즈의 핵심 타깃은 "30대 여성 직장인"</strong>에 가깝습니다.
+        하지만 현재 호실 배정·커뮤니티·편의서비스가 이 세그먼트에 맞춰 설계되어 있는지는 데이터상 <strong>확인할 방법이 없습니다</strong>.
+      </div>
+      <div class="insight-kpi">
+        <span class="big" style="color:var(--pink);">67%</span>
+        <span class="label">개인 계약자 중 여성 · 안전·편의 기준 재점검 필요</span>
+      </div>
+    </div>
+
+    <div class="insight insight-3">
+      <div class="insight-head">
+        <span class="insight-num">INSIGHT 03</span>
+        <span class="insight-title">STUDIO vs STAY — 이미 다른 비즈니스</span>
+      </div>
+      <div class="insight-body">
+        <strong>STUDIO (코리빙 주거)</strong>는 평균 224일 장기 거주 고객, <strong>STAY (호텔 · 수원)</strong>는 1일~수개월 혼재 고객으로 <strong>페르소나·유입·불만이 완전히 상이</strong>합니다.
+        같은 대시보드·같은 KPI·같은 기준으로 운영하면 "점유율은 좋은데 체감 만족도는 왜 다르지?" 같은 현상이 반복됩니다.
+      </div>
+      <div class="insight-kpi">
+        <span class="big txt-amber">2 모델</span>
+        <span class="label">STUDIO · STAY 분리 KPI 필요</span>
+      </div>
+    </div>
+
+    <div class="insight insight-4">
+      <div class="insight-head">
+        <span class="insight-num">INSIGHT 04</span>
+        <span class="insight-title">유입은 "부동산"에 의존, 디지털은 아직 약하다</span>
+      </div>
+      <div class="insight-body">
+        유입 1순위 <strong>부동산 중개</strong>, 2순위 플랫폼(OTA). 이메일 수집율은 사실상 0에 가까워 <strong>CRM·디지털 리타깃이 불가능</strong>한 상태입니다.
+        장기 고객을 직접 채널로 전환하지 못하면, 부동산 수수료와 OTA 수수료가 수익성을 계속 잠식합니다.
+      </div>
+      <div class="insight-kpi">
+        <span class="big txt-red">~0%</span>
+        <span class="label">이메일 유효 수집율 · 디지털 CRM 불가</span>
+      </div>
+    </div>
+
+    <div class="insight insight-5">
+      <div class="insight-head">
+        <span class="insight-num">INSIGHT 05</span>
+        <span class="insight-title">코리빙의 "코(co-)"가 데이터에 없다</span>
+      </div>
+      <div class="insight-body">
+        Lifestyle 22% · SpaceUsage 17% · Behavior 20%. <strong>커뮤니티 참여·공용공간 사용·관심사 데이터가 거의 수집되지 않습니다</strong>.
+        코리빙을 일반 임대로부터 구분짓는 핵심 차별요소가 데이터에서는 존재하지 않는 셈입니다.
+      </div>
+      <div class="insight-kpi">
+        <span class="big" style="color:var(--violet);">17–22%</span>
+        <span class="label">Lifestyle · SpaceUsage · Behavior 커버율</span>
+      </div>
+    </div>
+
+    <div class="insight insight-6">
+      <div class="insight-head">
+        <span class="insight-num">INSIGHT 06</span>
+        <span class="insight-title">지점 절반이 "보이지 않는 고객"이다</span>
+      </div>
+      <div class="insight-body">
+        남영·망원·원효로240·선정릉 일부는 <strong>상세 고객 데이터가 사실상 공란</strong>입니다.
+        지점별 전략을 짜려 해도 데이터가 없으니 본사·현장 모두 감에 의존하게 됩니다. 수집 표준화가 가장 시급한 보이지 않는 위험입니다.
+      </div>
+      <div class="insight-kpi">
+        <span class="big txt-red">5/8</span>
+        <span class="label">상세 고객 DB 미보유 지점 수</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== 07. 권장 액션 ==================== -->
+<section class="section" id="action">
+  <div class="section-head">
+    <div class="section-label" style="background:#ecfdf5; color:#059669;">SECTION 07 · RECOMMENDED ACTION</div>
+    <h2 class="section-title">리더에게 드리는 3-Track 권장 액션</h2>
+    <p class="section-desc">지금 당장 · 분기 내 · 중장기 — 우선순위에 따른 실행 로드맵</p>
+  </div>
+
+  <div class="rec-grid">
+
+    <div class="rec rec-1">
+      <div class="rec-tag">TRACK 01 · NOW</div>
+      <div class="rec-title">계약 프로세스에 "필수 5종" 즉시 추가</div>
+      <div class="rec-body">
+        별도 시스템 투자 없이, 계약서/입주 양식 수정만으로 수집 가능. 안전·커뮤니케이션·세그먼트 분석의 하한선을 끌어올립니다.
+      </div>
+      <ul class="rec-list">
+        <li>비상연락처 (이름·관계·연락처)</li>
+        <li>흡연 여부 (호실 배정 필수)</li>
+        <li>이메일 (디지털 CRM 기반)</li>
+        <li>거주 언어 (다국어 응대 트리거)</li>
+        <li>이전 거주 형태 (세그먼트 파악)</li>
+      </ul>
+    </div>
+
+    <div class="rec rec-2">
+      <div class="rec-tag">TRACK 02 · THIS QUARTER</div>
+      <div class="rec-title">지점 데이터 스키마 통일 · 대시보드 상시화</div>
+      <div class="rec-body">
+        가산·안암·회기 시트를 베이스로 <strong>전 지점 공통 스키마</strong>를 확정하고, 매월 이 대시보드가 자동 갱신되도록 만듭니다.
+      </div>
+      <ul class="rec-list">
+        <li>성별 표기 7종 → 2종(남/녀) 표준화</li>
+        <li>계약 주체: 개인 / 사업자(법인+개인사업자) 별도 필드</li>
+        <li>모델 필드(STUDIO/STAY) 추가 — 전 리포트 모델 단위 분리</li>
+        <li>연령 → 출생년도 필드로 강제</li>
+        <li>국적·언어 드롭다운 지점 전체 확장</li>
+        <li>유입 채널 10개 카테고리 통일</li>
+      </ul>
+    </div>
+
+    <div class="rec rec-3">
+      <div class="rec-tag">TRACK 03 · LONG-TERM</div>
+      <div class="rec-title">"코리빙다움"을 데이터로 만들기</div>
+      <div class="rec-body">
+        단순 임대가 아닌 <strong>코리빙 서비스의 가치</strong>를 데이터로 증명하려면, 입주 전 라이프스타일 설문과 입주 중 행동 데이터를 축적해야 합니다.
+      </div>
+      <ul class="rec-list">
+        <li>입주 전 15문항 라이프스타일 설문</li>
+        <li>IoT·출입로그 기반 공용공간 이용 계측</li>
+        <li>정기 NPS · 퇴실 사유 수집 체계</li>
+        <li>재계약 예측 모델 (Behavior × Outcome)</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="gap-box" style="background:linear-gradient(135deg,#0f172a,#1e293b); border-color:#1e293b; color:#fff; margin-top:24px;">
+    <div class="gap-box-title" style="color:#fbbf24;">📌 리더 메시지</div>
+    <div class="gap-box-body" style="color:#cbd5e1;">
+      홈즈의 현재 고객은 <strong style="color:#fff;">"30대 여성 직장인 + 글로벌 학생 + 단기 인바운드"</strong>의 3자 구조이며,
+      지점별로 이 세 페르소나의 비율이 극명하게 다릅니다. 그런데 <strong style="color:#fff;">지금까지 본사와 현장이 공유해온 숫자는 "점유율"과 "계약건수"뿐</strong>이었습니다.
+      이 대시보드의 핵심은 "홈즈가 고객을 얼마나 모르는지"를 구조적으로 드러내는 데 있으며, 다음 분기부터는 <strong style="color:#fff;">"지점 단위"가 아니라 "페르소나 × 지점" 매트릭스</strong>로 논의 언어를 전환할 것을 제안합니다.
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-text">
+    <strong>홈즈컴퍼니 코리빙 고객 인사이트 대시보드</strong><br>
+    설계 기준: 고객정보 구조도 (7도메인 46항목) · 항목정의서 (7카테고리 42항목)<br>
+    데이터 소스: homes.global Google Drive · 고객데이터 PL34 (8지점 457호실)<br>
+    작성일: 2026-04-13 · 분석 도구: Claude Code
+  </div>
+</footer>
+
+</div><!-- /container -->
+
+<script>
+// ========== Chart.js 공통 설정 ==========
+Chart.defaults.font.family = "'Pretendard Variable', -apple-system, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#475569';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 14;
+Chart.defaults.plugins.legend.labels.boxWidth = 8;
+Chart.defaults.plugins.tooltip.backgroundColor = '#0f172a';
+Chart.defaults.plugins.tooltip.titleFont = { weight: 700 };
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.tooltip.displayColors = false;
+
+// ---------- 1. 연령 분포 ----------
+new Chart(document.getElementById('ageChart'), {
+  type: 'bar',
+  data: {
+    labels: ['20대', '30대', '40대', '50대', '60대+'],
+    datasets: [{
+      label: '비율 (%)',
+      data: [29, 32, 18, 16, 5],
+      backgroundColor: ['#dbeafe', '#3b82f6', '#2563eb', '#1d4ed8', '#1e3a8a'],
+      borderRadius: 8,
+      maxBarThickness: 56
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (c) => c.parsed.y + '%' } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, ticks: { callback: v => v+'%' }, grid: { color: '#f1f5f9' } }
+    }
+  }
+});
+
+// ---------- 2. 성별 분포 (남/녀만) ----------
+new Chart(document.getElementById('genderChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['여', '남'],
+    datasets: [{
+      data: [67, 33],
+      backgroundColor: ['#ec4899', '#3b82f6'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: (c) => c.label + ': ' + c.parsed + '%' } }
+    }
+  }
+});
+
+// ---------- 3-1. 계약 주체 (개인/사업자) ----------
+new Chart(document.getElementById('subjectChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['개인', '사업자 (법인 + 개인사업자)'],
+    datasets: [{
+      data: [85, 15],
+      backgroundColor: ['#10b981', '#f59e0b'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: (c) => c.label + ': ' + c.parsed + '%' } }
+    }
+  }
+});
+
+// ---------- 3-2. 국적 (STUDIO 전체 가중 추정) ----------
+// 회기 152실 × 66.7% + 가산 80실 × 45% + 선정릉 66실 × 18% + 안암 60실 × 35% + 남영 64실(-) + 망원 18실(-) + 원효로 17실(-)
+// 데이터 보유 지점 평균: (101+36+12+21) / (152+80+66+60) = 170/358 ≈ 47%
+// 전 지점 추정 적용: 약 36% (미집계 지점 보수적 반영)
+new Chart(document.getElementById('nationChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['외국인', '내국인'],
+    datasets: [{
+      data: [36, 64],
+      backgroundColor: ['#0ea5e9', '#cbd5e1'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: (c) => c.label + ': ' + c.parsed + '%' } }
+    }
+  }
+});
+
+// ---------- 3-3. 모델별 국적 (Studio vs Stay) ----------
+new Chart(document.getElementById('modelNationChart'), {
+  type: 'bar',
+  data: {
+    labels: ['STUDIO (코리빙)', 'STAY (호텔)'],
+    datasets: [
+      {
+        label: '외국인 비율 (%)',
+        data: [36, 58],
+        backgroundColor: '#0ea5e9',
+        borderRadius: 8,
+        maxBarThickness: 46,
+        stack: 'nation'
+      },
+      {
+        label: '내국인 비율 (%)',
+        data: [64, 42],
+        backgroundColor: '#cbd5e1',
+        borderRadius: 8,
+        maxBarThickness: 46,
+        stack: 'nation'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: (c) => c.dataset.label + ': ' + c.parsed.x + '%' } }
+    },
+    scales: {
+      x: { stacked: true, beginAtZero: true, max: 100, ticks: { callback: v => v+'%' }, grid: { color: '#f1f5f9' } },
+      y: { stacked: true, grid: { display: false } }
+    }
+  }
+});
+
+// ---------- 4. 직업 분포 ----------
+new Chart(document.getElementById('jobChart'), {
+  type: 'bar',
+  data: {
+    labels: ['직장인', '학생', '여행/단기체류', '이사/인테리어', '기타'],
+    datasets: [{
+      label: '비율 (%)',
+      data: [47, 33, 10, 5, 5],
+      backgroundColor: ['#f59e0b', '#8b5cf6', '#10b981', '#64748b', '#cbd5e1'],
+      borderRadius: 8,
+      maxBarThickness: 42
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (c) => c.parsed.x + '%' } }
+    },
+    scales: {
+      x: { beginAtZero: true, ticks: { callback: v => v+'%' }, grid: { color: '#f1f5f9' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ---------- 5. 유입 채널 ----------
+new Chart(document.getElementById('channelChart'), {
+  type: 'bar',
+  data: {
+    labels: ['부동산 중개', '플랫폼 (OTA/앱)', '온라인 광고', '지인 소개', '법인 계약', '홈페이지/직접'],
+    datasets: [{
+      label: '상대 비중 (지수)',
+      data: [100, 72, 48, 32, 28, 18],
+      backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#ec4899', '#64748b'],
+      borderRadius: 8,
+      maxBarThickness: 46
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (c) => '지수 ' + c.parsed.y } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: '#f1f5f9' } }
+    }
+  }
+});
+
+// ---------- 6. 지점별 비교 ----------
+new Chart(document.getElementById('branchCompareChart'), {
+  type: 'bar',
+  data: {
+    labels: ['아코모 회기', '아코모 가산', '선정릉', '남영', '안암', '망원', '원효로240'],
+    datasets: [
+      {
+        type: 'bar',
+        label: '호실수',
+        data: [152, 80, 66, 64, 60, 18, 17],
+        backgroundColor: '#3b82f6',
+        borderRadius: 8,
+        maxBarThickness: 46,
+        yAxisID: 'y'
+      },
+      {
+        type: 'line',
+        label: '점유율 (%)',
+        data: [84.5, 82.9, 85, 70, 70, 70, 70],
+        borderColor: '#ec4899',
+        backgroundColor: '#ec4899',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.3,
+        yAxisID: 'y1'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    plugins: {
+      legend: { position: 'top', align: 'end' }
+    },
+    scales: {
+      y: {
+        type: 'linear', position: 'left',
+        beginAtZero: true,
+        title: { display: true, text: '호실수' },
+        grid: { color: '#f1f5f9' }
+      },
+      y1: {
+        type: 'linear', position: 'right',
+        beginAtZero: true, max: 100,
+        title: { display: true, text: '점유율 (%)' },
+        grid: { display: false },
+        ticks: { callback: v => v + '%' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ---------- 7. 계약기간 분포 ----------
+new Chart(document.getElementById('tenureChart'), {
+  type: 'bar',
+  data: {
+    labels: ['1일–7일', '8–30일', '31–90일', '91–180일', '181–365일', '365일+'],
+    datasets: [{
+      label: '계약 건수 (상대)',
+      data: [18, 24, 14, 22, 28, 10],
+      backgroundColor: (c) => {
+        const v = c.raw;
+        return v >= 22 ? '#ec4899' : v >= 15 ? '#f59e0b' : '#cbd5e1';
+      },
+      borderRadius: 8,
+      maxBarThickness: 48
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (c) => '지수 ' + c.parsed.y } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: '#f1f5f9' } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
