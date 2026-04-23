@@ -152,8 +152,9 @@ HomesApp.register('customers', {
           <div class="cb-tab" data-tab="sales">💳 세일즈 유형</div>
           <div class="cb-tab" data-tab="job">💼 직업 분포</div>
           <div class="cb-tab" data-tab="age">📅 연령 분포</div>
-          <div class="cb-tab" data-tab="contract">📋 계약 현황</div>
-          <div class="cb-tab" data-tab="customers_list" style="color:#4ade80; font-weight:700;">🏠 고객/호실</div>
+          <!-- 민감정보 포함: 계약 현황 / 고객·호실 탭은 조직 공유용에서 숨김 처리 (재활성화: style="display:none" 제거) -->
+          <div class="cb-tab" data-tab="contract" style="display:none">📋 계약 현황</div>
+          <div class="cb-tab" data-tab="customers_list" style="display:none; color:#4ade80; font-weight:700;">🏠 고객/호실</div>
           <div class="cb-tab" data-tab="compare">⚖️ 지점 비교</div>
           <div class="cb-tab" data-tab="insight" style="color:#f59e0b; font-weight:700;">💡 매출 인사이트</div>
         </div>
